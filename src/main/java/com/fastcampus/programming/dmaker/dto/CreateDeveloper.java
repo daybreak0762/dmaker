@@ -1,5 +1,6 @@
 package com.fastcampus.programming.dmaker.dto;
 
+import com.fastcampus.programming.dmaker.entity.Developer;
 import com.fastcampus.programming.dmaker.type.DeveloperLevel;
 import com.fastcampus.programming.dmaker.type.DeveloperSkillType;
 import jakarta.validation.constraints.Max;
@@ -47,5 +48,14 @@ public class CreateDeveloper {
         private DeveloperSkillType developerSkillType;
         private Integer experienceYears;
         private String memberId;
+
+        public static Response fromEnetity(Developer developer) {
+            return Response.builder()
+                    .developerLevel(developer.getDeveloperLevel())
+                    .developerSkillType(developer.getDeveloperSkillType())
+                    .experienceYears(developer.getExperienceYears())
+                    .memberId(developer.getMemberId())
+                    .build();
+        }
     }
 }
