@@ -112,8 +112,7 @@ public class DMakerService {
     public DeveloperDetailDto deleteDeveloper(String memberId) {
         // 1. EMPOLYED -> RETIRED
         Developer developer = developerRepository.findByMemberId(memberId)
-                .orElseThrow(() ->
-                        new DMakerException(NO_DEVELOPER));
+                .orElseThrow(() -> new DMakerException(NO_DEVELOPER));
         developer.setStatusCode(StatusCode.RETIRED);
 
         // 2. save into RetiredDeveloper
