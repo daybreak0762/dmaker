@@ -11,9 +11,10 @@ import com.fastcampus.programming.dmaker.exception.DMakerException;
 import com.fastcampus.programming.dmaker.repository.DeveloperRepository;
 import com.fastcampus.programming.dmaker.repository.RetiredDeveloperRepository;
 import com.fastcampus.programming.dmaker.type.DeveloperLevel;
-import jakarta.transaction.Transactional;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -27,7 +28,9 @@ public class DMakerService {
     private final RetiredDeveloperRepository retiredDeveloperRepository;
 
     @Transactional
-    public CreateDeveloper.Response createDeveloper(CreateDeveloper.Request request) {
+    public CreateDeveloper.Response createDeveloper(
+            CreateDeveloper.Request request
+    ) {
         validateCreateDeveloperRequest(request);
 
         // business logic start
@@ -45,7 +48,9 @@ public class DMakerService {
         return CreateDeveloper.Response.fromEnetity(developer);
     }
 
-    private void validateCreateDeveloperRequest(CreateDeveloper.Request request) {
+    private void validateCreateDeveloperRequest(
+            @NonNull CreateDeveloper.Request request
+    ) {
         // business validation
         validateDeveloperLevel(request.getDeveloperLevel(), request.getExperienceYears());
 
@@ -55,12 +60,15 @@ public class DMakerService {
                 }));
     }
 
+    @Transactional(readOnly = true)
     public List<DeveloperDto> getAllEmployedDevlopers() {
-        return developerRepository.findDevelopersByStatusCodeEquals(StatusCode.EMPLOYED)
-                .stream().map(DeveloperDto::fromEntity)
+        return developerRepository.findDevelopersByStatusCodeEquals(
+                StatusCode.EMPLOYED
+                ).stream().map(DeveloperDto::fromEntity)
                 .collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     public DeveloperDetailDto getDevloperDetail(String memberId) {
         return developerRepository.findByMemberId(memberId)
                 .map(DeveloperDetailDto::fromEntity)
@@ -68,8 +76,12 @@ public class DMakerService {
     }
 
     @Transactional
-    public DeveloperDetailDto editDeveloper(String memberId, EditDeveloper.Request request) {
-        validateEditDeveloperRequest(request, memberId);
+    public DeveloperDetailDto editDeveloper(
+            String memberId, EditDeveloper.Request request
+    ) {
+        validateDeveloperLevel(
+                request.getDeveloperLevel(), request.getExperienceYears()
+        );
 
         Developer developer = developerRepository.findByMemberId(memberId).orElseThrow(
                 () -> new DMakerException(NO_DEVELOPER)
@@ -82,17 +94,9 @@ public class DMakerService {
         return DeveloperDetailDto.fromEntity(developer);
     }
 
-    private void validateEditDeveloperRequest(
-            EditDeveloper.Request request,
-            String memberId) {
-        validateDeveloperLevel(
-                request.getDeveloperLevel(),
-                request.getExperienceYears()
-        );
-
-    }
-
-    private static void validateDeveloperLevel(DeveloperLevel developerLevel, Integer experienceYears) {
+    private static void validateDeveloperLevel(
+            DeveloperLevel developerLevel, Integer experienceYears
+    ) {
         if(developerLevel == DeveloperLevel.SENIOR
                 && experienceYears < 10) {
             throw new DMakerException(LEVEL_EXPERIENCE_YEARS_NOT_MATCHED);
