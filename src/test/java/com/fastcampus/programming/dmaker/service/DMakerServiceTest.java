@@ -18,6 +18,7 @@ import static com.fastcampus.programming.dmaker.exception.DMakerErrorCode.*;
 import static com.fastcampus.programming.dmaker.type.DeveloperLevel.SENIOR;
 import static com.fastcampus.programming.dmaker.type.DeveloperSkillType.FRONT_END;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
@@ -70,6 +71,8 @@ class DMakerServiceTest {
         // given
         given(developerRepository.findByMemberId(anyString()))
                 .willReturn(Optional.empty());
+        given(developerRepository.save(any()))
+                .willReturn(defaultDeveloper);
         ArgumentCaptor<Developer> captor =
                 ArgumentCaptor.forClass(Developer.class);
 

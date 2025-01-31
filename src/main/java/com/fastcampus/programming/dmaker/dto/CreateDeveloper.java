@@ -49,7 +49,7 @@ public class CreateDeveloper {
         private Integer experienceYears;
         private String memberId;
 
-        public static Response fromEnetity(Developer developer) {
+        public static Response fromEnetity(@NonNull Developer developer) {
             return Response.builder()
                     .developerLevel(developer.getDeveloperLevel())
                     .developerSkillType(developer.getDeveloperSkillType())
